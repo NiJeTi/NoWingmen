@@ -1,0 +1,19 @@
+<Project>
+
+    <Import
+            Project="$(MSBuildThisFileDirectory)Directory.Build.local.props"
+            Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.local.props')"
+    />
+
+    <PropertyGroup Condition="'$(GamePath)' != ''">
+        <GamePath>$(GamePath.Trim().TrimEnd('/').TrimEnd('\'))</GamePath>
+        <GameRefPath>$(GamePath)/NuclearOption_Data/Managed</GameRefPath>
+        <GamePluginsPath>$(GamePath)/BepInEx/plugins</GamePluginsPath>
+    </PropertyGroup>
+
+    <Target Name="CheckGamePath" BeforeTargets="BeforeBuild">
+        <Error Condition="'$(GamePath)' == ''" Text="Game path not set"/>
+        <Message Importance="high" Condition="'$(GamePath)' != ''" Text="Game path: $(GamePath)"/>
+    </Target>
+
+</Project>
