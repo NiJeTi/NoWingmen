@@ -483,3 +483,7 @@ $RECYCLE.BIN/
 
 # Local props
 Directory.Build.local.props
+
+# Superpowers
+docs/superpowers/
+.superpowers/

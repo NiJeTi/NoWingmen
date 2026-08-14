@@ -5,25 +5,23 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>true</ImplicitUsings>
 
-        <AssemblyName>NoWingmen</AssemblyName>
-        <RootNamespace>NoWingmen</RootNamespace>
+        <RequiresGame>true</RequiresGame>
         <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
 
         <Product>NoWingmen</Product>
         <Version>1.0.0</Version>
-        
-        <RestoreAdditionalProjectSources>
-            https://api.nuget.org/v3/index.json;
-            https://nuget.bepinex.dev/v3/index.json;
-            https://nuget.samboy.dev/v3/index.json
-        </RestoreAdditionalProjectSources>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <DebugType>portable</DebugType>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all"/>
         <PackageReference Include="BepInEx.Core" Version="5.*"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
-        <PackageReference Include="HarmonyX" Version="2.16.1" />
+        <PackageReference Include="HarmonyX" Version="2.9.0"/>
         <PackageReference Include="UnityEngine.Modules" Version="2022.3.62" IncludeAssets="compile"/>
     </ItemGroup>
 
@@ -36,10 +34,29 @@
         <Reference Include="$(GameRefPath)/Assembly-CSharp*.dll">
             <Private>false</Private>
         </Reference>
+        <Reference Include="$(GameRefPath)/Mirage.dll">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(GameRefPath)/UnityEngine.UI.dll">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(GameRefPath)/com.rlabrecque.steamworks.net.dll">
+            <Private>false</Private>
+        </Reference>
     </ItemGroup>
 
     <Target Name="Deploy" AfterTargets="Build">
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePluginsPath)/$(AssemblyName)"/>
-        <Message Importance="high" Text="Deployed $(AssemblyName).dll -> $(GamePluginsPath)/$(AssemblyName)"/>
+        <ItemGroup>
+            <DeployFiles Include="$(TargetPath)"/>
+            <DeployFiles Condition="'$(Configuration)' == 'Debug'" Include="$(TargetDir)$(TargetName).pdb"/>
+        </ItemGroup>
+
+        <Delete Condition="'$(Configuration)' == 'Release'"
+                Files="$(GamePluginsPath)/$(AssemblyName)/$(TargetName).pdb"/>
+        <Copy SourceFiles="@(DeployFiles)"
+              DestinationFolder="$(GamePluginsPath)/$(AssemblyName)"
+              SkipUnchangedFiles="true"/>
+        <Message Importance="high"
+                 Text="Deployed @(DeployFiles->'%(Filename)%(Extension)', ', ') -> $(GamePluginsPath)/$(AssemblyName)"/>
     </Target>
 </Project>

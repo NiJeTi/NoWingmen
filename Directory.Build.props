@@ -5,13 +5,21 @@
             Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.local.props')"
     />
 
+    <PropertyGroup>
+        <RestoreAdditionalProjectSources>
+            https://api.nuget.org/v3/index.json;
+            https://nuget.bepinex.dev/v3/index.json;
+            https://nuget.samboy.dev/v3/index.json
+        </RestoreAdditionalProjectSources>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(GamePath)' != ''">
         <GamePath>$(GamePath.Trim().TrimEnd('/').TrimEnd('\'))</GamePath>
         <GameRefPath>$(GamePath)/NuclearOption_Data/Managed</GameRefPath>
         <GamePluginsPath>$(GamePath)/BepInEx/plugins</GamePluginsPath>
     </PropertyGroup>
 
-    <Target Name="CheckGamePath" BeforeTargets="BeforeBuild">
+    <Target Name="CheckGamePath" BeforeTargets="BeforeBuild" Condition="'$(RequiresGame)' == 'true'">
         <Error Condition="'$(GamePath)' == ''" Text="Game path not set"/>
         <Message Importance="high" Condition="'$(GamePath)' != ''" Text="Game path: $(GamePath)"/>
     </Target>
