@@ -19,6 +19,16 @@ internal sealed class Plugin : BaseUnityPlugin
     private void Awake()
     {
         Logger = base.Logger;
+
+        NoWingmen.Config.Bind(
+            Config, () =>
+            {
+                MarkRenderer.Update();
+                StateManager?.TargetClaimIndex.Clear();
+                StateManager?.LineRenderer.Clear();
+            }
+        );
+
         StateManager = new StateManager();
 
         try
@@ -32,15 +42,6 @@ internal sealed class Plugin : BaseUnityPlugin
             Logger.LogError($"Failed to patch: {e}");
             return;
         }
-
-        NoWingmen.Config.Bind(
-            Config, () =>
-            {
-                MarkRenderer.Update();
-                StateManager?.TargetClaimIndex.Clear();
-                StateManager?.LineRenderer.Clear();
-            }
-        );
 
         Logger.LogInfo("Patch successful");
     }
