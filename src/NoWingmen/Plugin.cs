@@ -12,7 +12,7 @@ namespace NoWingmen;
 internal sealed class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger { get; private set; }
-    public static StateManager StateManager { get; private set; }
+    public static StateManager StateManager { get; } = new();
 
     private Harmony _harmony;
 
@@ -28,8 +28,6 @@ internal sealed class Plugin : BaseUnityPlugin
                 StateManager?.LineRenderer.Clear();
             }
         );
-
-        StateManager = new StateManager();
 
         try
         {
@@ -49,10 +47,6 @@ internal sealed class Plugin : BaseUnityPlugin
     private void OnDestroy()
     {
         _harmony?.UnpatchSelf();
-
-        StateManager.TargetClaimIndex.Clear();
-        StateManager.LineRenderer.Clear();
-        StateManager = null;
     }
 
     private void Update()
@@ -79,6 +73,13 @@ internal sealed class Plugin : BaseUnityPlugin
 
     private void LateUpdate()
     {
+        if (StateManager.MissionTracker.Changed())
+        {
+            Logger.LogDebug("State reset on mission change");
+            StateManager.Reset();
+            MarkRenderer.Update();
+        }
+
         if (StateManager.TargetClaimIndex.Refresh())
         {
             MarkRenderer.Update();

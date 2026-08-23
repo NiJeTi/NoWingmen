@@ -11,6 +11,7 @@ internal sealed class StateManager
 
     public FriendList FriendList { get; } = new();
     public Wing Wing { get; } = new();
+    public MissionTracker MissionTracker { get; } = new();
 
     public TargetClaimIndex TargetClaimIndex { get; }
     public LineRenderer LineRenderer { get; }
@@ -21,6 +22,15 @@ internal sealed class StateManager
         TargetClaimIndex = new TargetClaimIndex(Wing);
         LineRenderer = new LineRenderer(TargetClaimIndex);
         MarkColorResolver = new MarkColorResolver(FriendList, Wing, TargetClaimIndex);
+    }
+
+    public void Reset()
+    {
+        CurrentSelection = null;
+
+        Wing.Clear();
+        TargetClaimIndex.Clear();
+        LineRenderer.Clear();
     }
 
     public void Select(Unit unit)

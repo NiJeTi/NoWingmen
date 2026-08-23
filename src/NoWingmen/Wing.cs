@@ -9,6 +9,11 @@ internal sealed class Wing
         return _ids.Contains(id);
     }
 
+    public void Clear()
+    {
+        _ids.Clear();
+    }
+
     public bool Toggle(ulong steamId)
     {
         if (_ids.Remove(steamId))
