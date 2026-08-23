@@ -54,6 +54,11 @@ internal sealed class MarkColorResolver
             return false;
         }
 
+        if (!Identity.IsSameFaction(unit))
+        {
+            return false;
+        }
+
         var isFriend = Config.IsCategoryVisible(MarkCategory.Friend) && _friendList.Check(steamId);
         var isWing = Config.IsCategoryVisible(MarkCategory.Wing) && _wing.Check(steamId);
 
