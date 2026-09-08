@@ -6,8 +6,14 @@ namespace NoWingmen;
 
 internal sealed class StateManager
 {
+    private const bool DefaultLockPreventionEnabled = true;
+    
+    public bool InGame =>
+        GameManager.gameState == GameState.SinglePlayer ||
+        GameManager.gameState == GameState.Multiplayer;
+
     public Unit CurrentSelection { get; private set; }
-    public bool IsChatOpen { get; set; }
+    public bool LockPreventionEnabled { get; set; } = DefaultLockPreventionEnabled;
 
     public FriendList FriendList { get; } = new();
     public Wing Wing { get; } = new();
@@ -27,6 +33,7 @@ internal sealed class StateManager
     public void Reset()
     {
         CurrentSelection = null;
+        LockPreventionEnabled = DefaultLockPreventionEnabled;
 
         Wing.Clear();
         TargetClaimIndex.Clear();
