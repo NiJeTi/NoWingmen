@@ -1,14 +1,13 @@
 using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using NoWingmen.Marks;
 using NuclearOption.MissionEditorScripts;
-using UnityEngine;
 
 namespace NoWingmen;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInDependency(Controls.InputFrameworkGuid)]
 internal sealed class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger { get; private set; }
@@ -28,6 +27,8 @@ internal sealed class Plugin : BaseUnityPlugin
                 StateManager?.LineRenderer.Clear();
             }
         );
+
+        Controls.Register();
 
         try
         {
@@ -51,7 +52,7 @@ internal sealed class Plugin : BaseUnityPlugin
 
     private void Update()
     {
-        if (StateManager.IsChatOpen)
+        if (!StateManager.InGame)
         {
             return;
         }
@@ -61,11 +62,11 @@ internal sealed class Plugin : BaseUnityPlugin
             return;
         }
 
-        if (IsPressed(NoWingmen.Config.ToggleWingShortcut.Value))
+        if (Controls.Pressed(Controls.ActionToggleWing))
         {
             ToggleWing();
         }
-        else if (IsPressed(NoWingmen.Config.ToggleLockPreventionShortcut.Value))
+        else if (Controls.Pressed(Controls.ActionToggleLockPrevention))
         {
             ToggleLockPrevention();
         }
@@ -103,7 +104,7 @@ internal sealed class Plugin : BaseUnityPlugin
             Reject($"<b>{Identity.GetDisplayName(unit)}</b> is in another faction");
             return;
         }
-        
+
         if (!Identity.TryGetId(unit, out var id))
         {
             Reject($"<b>{unit.unitName}</b> is not a player");
@@ -134,16 +135,11 @@ internal sealed class Plugin : BaseUnityPlugin
 
     private static void ToggleLockPrevention()
     {
-        var newState = !NoWingmen.Config.PreventSelectedTargetsLock.Value;
-        NoWingmen.Config.PreventSelectedTargetsLock.Value = newState;
+        var newState = !StateManager.LockPreventionEnabled;
+        StateManager.LockPreventionEnabled = newState;
 
         Logger.LogDebug($"Lock prevention {(newState ? "enabled" : "disabled")}");
 
         Feedback.OnLockPreventionToggle(newState);
-    }
-
-    private static bool IsPressed(KeyboardShortcut shortcut)
-    {
-        return Input.GetKeyDown(shortcut.MainKey) && shortcut.Modifiers.All(Input.GetKey);
     }
 }

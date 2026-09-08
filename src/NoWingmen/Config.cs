@@ -8,20 +8,15 @@ internal static class Config
 {
     private const string GeneralSection = "General";
     private const string VisualsSection = "Visuals";
-    private const string KeybindsSection = "Keybinds";
 
     public static ConfigEntry<bool> ShowWing { get; private set; }
     public static ConfigEntry<bool> ShowWingTargetSelection { get; private set; }
     public static ConfigEntry<bool> ShowFriends { get; private set; }
     public static ConfigEntry<bool> ShowTeammatesTargetSelection { get; private set; }
-    public static ConfigEntry<bool> PreventSelectedTargetsLock { get; private set; }
 
     public static ConfigEntry<Color> WingColor { get; private set; }
     public static ConfigEntry<Color> FriendsColor { get; private set; }
     public static ConfigEntry<Color> SelectedTargetsColor { get; private set; }
-
-    public static ConfigEntry<KeyboardShortcut> ToggleWingShortcut { get; private set; }
-    public static ConfigEntry<KeyboardShortcut> ToggleLockPreventionShortcut { get; private set; }
 
     public static void Bind(ConfigFile config, Action onVisualsChanged)
     {
@@ -41,13 +36,9 @@ internal static class Config
             GeneralSection, "ShowTeammatesTargetSelection", false,
             "Mark every target each teammate have selected."
         );
-        PreventSelectedTargetsLock = config.Bind(
-            GeneralSection, "PreventSelectedTargetsLock", true,
-            "Prevent locking enemy units your wing members have already selected."
-        );
 
         WingColor = config.Bind(
-            VisualsSection, "WingColor", new Color( 1f, 0.75f, 0f),
+            VisualsSection, "WingColor", new Color(1f, 0.75f, 0f),
             "Color of members of your wing."
         );
         FriendsColor = config.Bind(
@@ -57,15 +48,6 @@ internal static class Config
         SelectedTargetsColor = config.Bind(
             VisualsSection, "SelectedTargetsColor", new Color(0.8f, 0.3f, 1f),
             "Color of target enemy units."
-        );
-
-        ToggleWingShortcut = config.Bind(
-            KeybindsSection, "ToggleWingShortcut", new KeyboardShortcut(KeyCode.P),
-            "Add/remove the last selected unit to/from your wing."
-        );
-        ToggleLockPreventionShortcut = config.Bind(
-            KeybindsSection, "ToggleLockPreventionShortcut", new KeyboardShortcut(KeyCode.O),
-            "Toggle already targeted enemy units lock prevention shortcut."
         );
 
         ShowWing.SettingChanged += (_, _) => onVisualsChanged();

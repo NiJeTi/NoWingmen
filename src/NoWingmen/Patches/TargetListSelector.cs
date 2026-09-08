@@ -15,7 +15,7 @@ internal static class TargetListSelector_CheckExclusions
             return;
         }
 
-        if (!Config.PreventSelectedTargetsLock.Value)
+        if (!Plugin.StateManager.LockPreventionEnabled)
         {
             return;
         }
