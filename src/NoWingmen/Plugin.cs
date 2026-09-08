@@ -94,22 +94,19 @@ internal sealed class Plugin : BaseUnityPlugin
 
         if (unit == null)
         {
-            Logger.LogDebug("Shortcut is pressed on an empty selection");
-            Feedback.OnWingReject();
+            Reject("No unit selected");
             return;
         }
 
+        if (!Identity.IsSameFaction(unit))
+        {
+            Reject($"<b>{Identity.GetDisplayName(unit)}</b> is in another faction");
+            return;
+        }
+        
         if (!Identity.TryGetId(unit, out var id))
         {
-            Logger.LogDebug($"'{unit.unitName}' is not a player");
-            Feedback.OnWingReject();
-            return;
-        }
-
-        if (!Identity.IsSameFaction(unit) && !StateManager.Wing.Check(id))
-        {
-            Logger.LogDebug($"'{unit.unitName}' is in another faction");
-            Feedback.OnWingReject();
+            Reject($"<b>{unit.unitName}</b> is not a player");
             return;
         }
 
@@ -117,16 +114,22 @@ internal sealed class Plugin : BaseUnityPlugin
         if (status)
         {
             Logger.LogInfo($"'{unit.unitName}' was added to the wing");
-            Feedback.OnWingAdd();
+            Feedback.OnWingAdd(unit);
         }
         else
         {
             Logger.LogInfo($"'{unit.unitName}' was removed from the wing");
-            Feedback.OnWingRemove();
+            Feedback.OnWingRemove(unit);
         }
 
         StateManager.TargetClaimIndex.Clear();
         MarkRenderer.Update();
+    }
+
+    private static void Reject(string reason)
+    {
+        Logger.LogDebug(reason);
+        Feedback.OnWingReject(reason);
     }
 
     private static void ToggleLockPrevention()
@@ -134,16 +137,9 @@ internal sealed class Plugin : BaseUnityPlugin
         var newState = !NoWingmen.Config.PreventSelectedTargetsLock.Value;
         NoWingmen.Config.PreventSelectedTargetsLock.Value = newState;
 
-        if (newState)
-        {
-            Logger.LogDebug("Lock prevention enabled");
-        }
-        else
-        {
-            Logger.LogInfo("Lock prevention disabled");
-        }
+        Logger.LogDebug($"Lock prevention {(newState ? "enabled" : "disabled")}");
 
-        Feedback.OnLockPreventionToggle();
+        Feedback.OnLockPreventionToggle(newState);
     }
 
     private static bool IsPressed(KeyboardShortcut shortcut)

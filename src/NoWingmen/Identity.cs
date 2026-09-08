@@ -23,6 +23,18 @@ internal static class Identity
         return id != 0;
     }
 
+    public static string GetDisplayName(Unit unit)
+    {
+        if (unit == null)
+        {
+            return string.Empty;
+        }
+
+        var player = unit.GetPlayer();
+
+        return player != null ? player.GetDisplayName(PlayerNameContext.Other) : unit.unitName;
+    }
+
     public static bool TryCompareFaction(Unit unit, out bool same)
     {
         same = false;
