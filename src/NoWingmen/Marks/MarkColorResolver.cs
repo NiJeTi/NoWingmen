@@ -49,6 +49,11 @@ internal sealed class MarkColorResolver
     {
         color = default;
 
+        if (Identity.IsLocalAircraft(unit))
+        {
+            return false;
+        }
+
         if (!Identity.TryGetId(unit, out var steamId))
         {
             return false;
@@ -59,11 +64,20 @@ internal sealed class MarkColorResolver
             return false;
         }
 
-        var isFriend = Config.IsCategoryVisible(MarkCategory.Friend) && _friendList.Check(steamId);
-        var isWing = Config.IsCategoryVisible(MarkCategory.Wing) && _wing.Check(steamId);
-
-        var category = isWing ? MarkCategory.Wing : isFriend ? MarkCategory.Friend : MarkCategory.None;
-        if (category == MarkCategory.None)
+        MarkCategory category;
+        if (Config.IsCategoryVisible(MarkCategory.Wing) && _wing.Check(steamId))
+        {
+            category = MarkCategory.Wing;
+        }
+        else if (Config.IsCategoryVisible(MarkCategory.Friend) && _friendList.Check(steamId))
+        {
+            category = MarkCategory.Friend;
+        }
+        else if (Config.IsCategoryVisible(MarkCategory.Teammate))
+        {
+            category = MarkCategory.Teammate;
+        }
+        else
         {
             return false;
         }

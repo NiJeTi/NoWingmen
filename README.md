@@ -1,7 +1,7 @@
 # NoWingmen
 
 A [BepInEx](https://github.com/BepInEx/BepInEx) plugin for **Nuclear Option** that adds different visualising
-options for your wingmen and friends.
+options for teammates.
 
 > [!NOTE]
 > It only has visual effect thus can be used by any client without affecting anything on the server.
@@ -10,8 +10,9 @@ options for your wingmen and friends.
 
 - **Wing** — mark any player of your faction as a wingman with a hotkey.
 - **Friends** — automatically mark your Steam friends flying for the same faction.
-- **Target selection** — highlight enemies your wing (or the whole team) has already selected.
-- **Lock prevention** — skip enemies already selected by your wing when cycling targets.
+- **Teammates** — automatically mark every other player aircraft of your faction.
+- **Target selection** — highlight enemies your teammates have already selected.
+- **Lock prevention** — skip enemies already selected by others when cycling targets.
 
 Hotkeys are bound in the game's own **Controls** menu, under the **Gameplay** section:
 ![Controls](./assets/controls.png)

@@ -20,7 +20,7 @@ internal static class TargetListSelector_CheckExclusions
             return;
         }
 
-        if (!Plugin.StateManager.TargetClaimIndex.IsLockPrevented(u))
+        if (!Plugin.StateManager.TargetClaimIndex.IsClaimed(u))
         {
             return;
         }

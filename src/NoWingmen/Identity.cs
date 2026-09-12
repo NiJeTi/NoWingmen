@@ -59,4 +59,14 @@ internal static class Identity
     {
         return TryCompareFaction(unit, out var same) && same;
     }
+
+    public static bool IsLocalAircraft(Unit unit)
+    {
+        return GameManager.IsLocalAircraft(unit);
+    }
+
+    public static bool IsPlayer(Unit unit)
+    {
+        return unit != null && unit.GetPlayer() != null;
+    }
 }
