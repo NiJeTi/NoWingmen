@@ -22,9 +22,9 @@ internal sealed class Plugin : BaseUnityPlugin
         NoWingmen.Config.Bind(
             Config, () =>
             {
-                MarkRenderer.Update();
                 StateManager?.TargetClaimIndex.Clear();
                 StateManager?.LineRenderer.Clear();
+                MarkRenderer.Update();
             }
         );
 

@@ -5,10 +5,11 @@ internal sealed class TargetClaimIndex
     private readonly Wing _wing;
 
     private readonly List<TargetClaim> _index = new();
-    private readonly HashSet<Unit> _lockPrevented = new();
 
     private Dictionary<Unit, Unit> _current = new();
     private Dictionary<Unit, Unit> _previous = new();
+
+    private bool _cleared;
 
     public TargetClaimIndex(Wing wing)
     {
@@ -22,54 +23,39 @@ internal sealed class TargetClaimIndex
         return _current.ContainsKey(target);
     }
 
-    public bool IsLockPrevented(Unit target)
-    {
-        return _lockPrevented.Contains(target);
-    }
-
     public bool Refresh()
     {
         _index.Clear();
-        _lockPrevented.Clear();
 
         (_current, _previous) = (_previous, _current);
         _current.Clear();
 
         Collect();
 
-        return IndexChanged();
+        var changed = _cleared || IndexChanged();
+        _cleared = false;
+
+        return changed;
     }
 
     public void Clear()
     {
         _index.Clear();
-        _lockPrevented.Clear();
 
         _current.Clear();
         _previous.Clear();
+
+        _cleared = true;
     }
 
     private void Collect()
     {
-        foreach (var claimer in UnitRegistry.allAircraft)
+        foreach (var claimer in UnitRegistry.allAircraft.Where(IsClaimer))
         {
-            if (!IsClaimer(claimer))
-            {
-                continue;
-            }
-
-            var preventsLock = IsWingMember(claimer);
-
-            foreach (var target in claimer.weaponManager.GetTargetList()
-                .Where(target => !Identity.IsSameFaction(target)))
+            foreach (var target in claimer.weaponManager.GetTargetList().Where(x => !Identity.IsSameFaction(x)))
             {
                 _index.Add(new TargetClaim(claimer, target));
                 _current[target] = claimer;
-
-                if (preventsLock)
-                {
-                    _lockPrevented.Add(target);
-                }
             }
         }
     }
@@ -91,12 +77,22 @@ internal sealed class TargetClaimIndex
             return false;
         }
 
+        if (!Identity.IsPlayer(aircraft))
+        {
+            return false;
+        }
+
         if (Config.ShowTeammatesTargetSelection.Value)
         {
             return true;
         }
 
-        return Config.ShowWingTargetSelection.Value && IsWingMember(aircraft);
+        if (Config.ShowWingTargetSelection.Value && IsWingMember(aircraft))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private bool IsWingMember(Aircraft aircraft)
