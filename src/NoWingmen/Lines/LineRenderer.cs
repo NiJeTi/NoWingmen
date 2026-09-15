@@ -9,6 +9,8 @@ internal sealed class LineRenderer
     private const float Alpha = 0.6f;
 
     private readonly TargetClaimIndex _targetClaimIndex;
+
+    private readonly List<Line> _drawn = [];
     private readonly Stack<Line> _pool = [];
 
     public LineRenderer(TargetClaimIndex targetClaimIndex)
@@ -16,13 +18,10 @@ internal sealed class LineRenderer
         _targetClaimIndex = targetClaimIndex;
     }
 
-    public void Update()
+    public void Tick()
     {
-        var map = SceneSingleton<DynamicMap>.i;
-        if (map == null)
-        {
-            return;
-        }
+        var map = SceneSingleton<DynamicMap>.i ??
+            throw new InvalidOperationException($"{nameof(DynamicMap)} is null.");
 
         if (!map.gameObject.activeInHierarchy)
         {
@@ -37,16 +36,16 @@ internal sealed class LineRenderer
 
         var thickness = Thickness / mapScale;
 
-        var drawn = new List<Line>();
+        _drawn.Clear();
 
         foreach (var claim in _targetClaimIndex.Index)
         {
-            if (!DynamicMap.TryGetMapIcon(claim.Claimer, out var claimerIcon))
+            if (!map.TryGetIcon(claim.Claimer, out var claimerIcon))
             {
                 continue;
             }
 
-            if (!DynamicMap.TryGetMapIcon(claim.Target, out var targetIcon))
+            if (!map.TryGetIcon(claim.Target, out var targetIcon))
             {
                 continue;
             }
@@ -55,7 +54,7 @@ internal sealed class LineRenderer
             color.a *= Alpha;
 
             var line = Draw(map, claimerIcon, targetIcon, color, thickness);
-            drawn.Add(line);
+            _drawn.Add(line);
         }
 
         foreach (var line in _pool)
@@ -63,7 +62,7 @@ internal sealed class LineRenderer
             line.Hide();
         }
 
-        foreach (var line in drawn)
+        foreach (var line in _drawn)
         {
             _pool.Push(line);
         }

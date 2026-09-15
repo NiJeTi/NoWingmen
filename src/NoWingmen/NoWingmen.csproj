@@ -4,12 +4,13 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>true</ImplicitUsings>
+        <Nullable>enable</Nullable>
 
         <RequiresGame>true</RequiresGame>
         <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
 
         <Product>NoWingmen</Product>
-        <Version>1.2.0</Version>
+        <Version>2.0.0</Version>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -35,7 +36,13 @@
         <Reference Include="$(GameRefPath)/Rewired_Core.dll">
             <Private>false</Private>
         </Reference>
+        <Reference Include="$(GameRefPath)/UniTask.dll">
+            <Private>false</Private>
+        </Reference>
         <Reference Include="$(GameRefPath)/UnityEngine.UI.dll">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(GameRefPath)/Unity.TextMeshPro.dll">
             <Private>false</Private>
         </Reference>
         <Reference Include="$(GameRefPath)/com.rlabrecque.steamworks.net.dll">

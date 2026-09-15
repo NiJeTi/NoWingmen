@@ -5,45 +5,23 @@ using UnityEngine;
 namespace NoWingmen.Patches;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-[HarmonyPatch(typeof(HUDUnitMarker), nameof(HUDUnitMarker.SelectMarker))]
-internal static class HUDUnitMarker_SelectMarker
-{
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private static void Postfix(HUDUnitMarker __instance)
-    {
-        Plugin.StateManager.Select(__instance?.unit);
-    }
-}
-
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[HarmonyPatch(typeof(HUDUnitMarker), nameof(HUDUnitMarker.DeselectMarker))]
-internal static class HUDUnitMarker_DeselectMarker
-{
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private static void Postfix(HUDUnitMarker __instance)
-    {
-        Plugin.StateManager.Deselect(__instance?.unit);
-    }
-}
-
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 [HarmonyPatch(typeof(HUDUnitMarker), "UpdateColor")]
 internal static class HUDUnitMarker_UpdateColor
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(HUDUnitMarker __instance)
     {
-        if (__instance?.image == null)
+        if (Plugin.State == null)
         {
             return;
         }
-
+        
         if (__instance.selected)
         {
             return;
         }
 
-        if (!Plugin.StateManager.MarkColorResolver.TryResolve(__instance.unit, out var color))
+        if (!Plugin.State.MarkColorResolver.TryResolve(__instance.unit, out var color))
         {
             return;
         }
@@ -63,12 +41,17 @@ internal static class HUDUnitMarker_SetFactionColor
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(HUDUnitMarker __instance)
     {
-        if (__instance == null || __instance.selected)
+        if (Plugin.State == null)
+        {
+            return;
+        }
+        
+        if (__instance.selected)
         {
             return;
         }
 
-        if (!Plugin.StateManager.MarkColorResolver.TryResolve(__instance.unit, out var color))
+        if (!Plugin.State.MarkColorResolver.TryResolve(__instance.unit, out var color))
         {
             return;
         }

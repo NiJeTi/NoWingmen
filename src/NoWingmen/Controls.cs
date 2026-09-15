@@ -3,24 +3,29 @@ using Rewired;
 
 namespace NoWingmen;
 
-internal static class Controls
+internal sealed class Controls
 {
-    public const string InputFrameworkGuid = "experimental.assassin1076.extrainputframework";
+    public const string GuidInputFramework = "experimental.assassin1076.extrainputframework";
 
     private const string ActionCategory = "Gameplay";
+    private const string ActionToggleLockPrevention = "NoWingmen: Toggle lock prevention";
 
-    public const string ActionToggleWing = "NoWingmen: Toggle player in wing";
-    public const string ActionToggleLockPrevention = "NoWingmen: Toggle lock prevention";
-
-    public static void Register()
+    private Controls()
     {
-        ExtraInputManager.LoadPendingActions();
-        ExtraInputManager.RegisterAction(ActionToggleWing, InputActionType.Button, ActionCategory);
-        ExtraInputManager.RegisterAction(ActionToggleLockPrevention, InputActionType.Button, ActionCategory);
     }
 
-    public static bool Pressed(string action)
+    public static Controls Init()
     {
-        return GameManager.playerInput.GetButtonDown(action);
+        ExtraInputManager.LoadPendingActions();
+        ExtraInputManager.RegisterAction(ActionToggleLockPrevention, InputActionType.Button, ActionCategory);
+
+        return new Controls();
+    }
+
+    public bool IsToggleLockPreventionDown()
+    {
+        var player = GameManager.playerInput;
+
+        return player != null && player.GetButtonDown(ActionToggleLockPrevention);
     }
 }

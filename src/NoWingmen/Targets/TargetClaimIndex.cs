@@ -1,22 +1,26 @@
+using NuclearOption.Networking;
+
 namespace NoWingmen.Targets;
 
 internal sealed class TargetClaimIndex
 {
+    private readonly Settings _settings;
     private readonly Wing _wing;
 
-    private readonly List<TargetClaim> _index = new();
+    private readonly List<TargetClaim> _index = [];
 
     private Dictionary<Unit, Unit> _current = new();
     private Dictionary<Unit, Unit> _previous = new();
 
     private bool _cleared;
 
-    public TargetClaimIndex(Wing wing)
+    public IReadOnlyCollection<TargetClaim> Index => _index;
+
+    public TargetClaimIndex(Settings settings, Wing wing)
     {
+        _settings = settings;
         _wing = wing;
     }
-
-    public IReadOnlyCollection<TargetClaim> Index => _index;
 
     public bool IsClaimed(Unit target)
     {
@@ -67,37 +71,33 @@ internal sealed class TargetClaimIndex
             return false;
         }
 
-        if (GameManager.IsLocalAircraft(aircraft))
+        var player = aircraft.GetPlayer();
+        if (player == null)
         {
             return false;
         }
 
-        if (!Identity.IsSameFaction(aircraft))
+        if (Identity.IsLocalPlayer(player))
         {
             return false;
         }
 
-        if (!Identity.IsPlayer(aircraft))
+        if (!Identity.IsSameFaction(player))
         {
             return false;
         }
 
-        if (Config.ShowTeammatesTargetSelection.Value)
+        if (_settings.ShowTeammatesTargetSelection.Value)
         {
             return true;
         }
 
-        if (Config.ShowWingTargetSelection.Value && IsWingMember(aircraft))
+        if (_settings.ShowWingTargetSelection.Value && _wing.Check(player))
         {
             return true;
         }
 
         return false;
-    }
-
-    private bool IsWingMember(Aircraft aircraft)
-    {
-        return Identity.TryGetId(aircraft, out var id) && _wing.Check(id);
     }
 
     private bool IndexChanged()

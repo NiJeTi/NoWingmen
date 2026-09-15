@@ -7,10 +7,9 @@ internal static class MarkRenderer
     private static readonly AccessTools.FieldRef<CombatHUD, List<HUDUnitMarker>> MarkersRef =
         AccessTools.FieldRefAccess<CombatHUD, List<HUDUnitMarker>>("markers");
 
-    private static readonly Action<HUDUnitMarker> UpdateColorRef =
-        AccessTools.MethodDelegate<Action<HUDUnitMarker>>(
-            AccessTools.Method(typeof(HUDUnitMarker), "UpdateColor")
-        );
+    private static readonly Action<HUDUnitMarker> UpdateColorRef = AccessTools.MethodDelegate<Action<HUDUnitMarker>>(
+        AccessTools.Method(typeof(HUDUnitMarker), "UpdateColor")
+    );
 
     public static void Update()
     {
@@ -20,14 +19,11 @@ internal static class MarkRenderer
 
     private static void UpdateMap()
     {
-        var map = SceneSingleton<DynamicMap>.i;
-        if (map == null || map.mapIcons == null)
-        {
-            return;
-        }
+        var map = SceneSingleton<DynamicMap>.i ??
+            throw new InvalidOperationException($"{nameof(DynamicMap)} is null.");
 
         var exceptionCount = 0;
-        Exception lastException = null;
+        Exception? lastException = null;
         foreach (var icon in map.mapIcons)
         {
             try
@@ -43,27 +39,18 @@ internal static class MarkRenderer
 
         if (exceptionCount > 0)
         {
-            Plugin.Logger.LogError($"Failed to refresh {exceptionCount} map icons: {lastException}");
+            Plugin.Logger.LogError($"Failed to update {exceptionCount} map icons: {lastException}");
         }
     }
 
     private static void UpdateHud()
     {
-        var hud = SceneSingleton<CombatHUD>.i;
-        if (hud == null)
-        {
-            return;
-        }
-
-        var markers = MarkersRef(hud);
-        if (markers == null)
-        {
-            return;
-        }
+        var hud = SceneSingleton<CombatHUD>.i ??
+            throw new InvalidOperationException($"{nameof(CombatHUD)} is null.");
 
         var exceptionCount = 0;
-        Exception lastException = null;
-        foreach (var marker in markers)
+        Exception? lastException = null;
+        foreach (var marker in MarkersRef(hud))
         {
             try
             {
@@ -78,7 +65,7 @@ internal static class MarkRenderer
 
         if (exceptionCount > 0)
         {
-            Plugin.Logger.LogError($"Failed to refresh {exceptionCount} HUD markers: {lastException}");
+            Plugin.Logger.LogError($"Failed to update {exceptionCount} HUD markers: {lastException}");
         }
     }
 }

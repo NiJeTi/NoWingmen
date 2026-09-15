@@ -1,21 +1,26 @@
 using NoWingmen.Targets;
+using NuclearOption.Networking;
 using UnityEngine;
 
 namespace NoWingmen.Marks;
 
 internal sealed class MarkColorResolver
 {
-    private readonly FriendList _friendList;
+    private static readonly Color WingColor = new(1f, 0.75f, 0f);
+    private static readonly Color TeammateColor = new(0.03f, 0.85f, 0.66f);
+    private static readonly Color ClaimedTargetColor = new(0.8f, 0.3f, 1f);
+
+    private readonly Settings _settings;
     private readonly Wing _wing;
     private readonly TargetClaimIndex _targetClaimIndex;
 
     public MarkColorResolver(
-        FriendList friendList,
+        Settings settings,
         Wing wing,
         TargetClaimIndex targetClaimIndex
     )
     {
-        _friendList = friendList;
+        _settings = settings;
         _wing = wing;
         _targetClaimIndex = targetClaimIndex;
     }
@@ -32,6 +37,44 @@ internal sealed class MarkColorResolver
         return TryResolveIdentity(unit, out color) || TryResolveClaim(unit, out color);
     }
 
+    private bool TryResolveIdentity(Unit unit, out Color color)
+    {
+        color = default;
+
+        var player = unit.GetPlayer();
+        if (player == null)
+        {
+            return false;
+        }
+        
+        if (Identity.IsLocalPlayer(player))
+        {
+            return false;
+        }
+
+        if (!Identity.IsSameFaction(player))
+        {
+            return false;
+        }
+
+        MarkCategory category;
+        if (_settings.ShowWing.Value && _wing.Check(player))
+        {
+            category = MarkCategory.Wing;
+        }
+        else if (_settings.ShowTeammates.Value)
+        {
+            category = MarkCategory.Teammate;
+        }
+        else
+        {
+            return false;
+        }
+
+        color = GetColor(category);
+        return true;
+    }
+
     private bool TryResolveClaim(Unit unit, out Color color)
     {
         color = default;
@@ -41,48 +84,18 @@ internal sealed class MarkColorResolver
             return false;
         }
 
-        color = Config.GetCategoryColor(MarkCategory.ClaimedTarget);
+        color = GetColor(MarkCategory.ClaimedTarget);
         return true;
     }
 
-    private bool TryResolveIdentity(Unit unit, out Color color)
+    public static Color GetColor(MarkCategory category)
     {
-        color = default;
-
-        if (Identity.IsLocalAircraft(unit))
+        return category switch
         {
-            return false;
-        }
-
-        if (!Identity.TryGetId(unit, out var steamId))
-        {
-            return false;
-        }
-
-        if (!Identity.IsSameFaction(unit))
-        {
-            return false;
-        }
-
-        MarkCategory category;
-        if (Config.IsCategoryVisible(MarkCategory.Wing) && _wing.Check(steamId))
-        {
-            category = MarkCategory.Wing;
-        }
-        else if (Config.IsCategoryVisible(MarkCategory.Friend) && _friendList.Check(steamId))
-        {
-            category = MarkCategory.Friend;
-        }
-        else if (Config.IsCategoryVisible(MarkCategory.Teammate))
-        {
-            category = MarkCategory.Teammate;
-        }
-        else
-        {
-            return false;
-        }
-
-        color = Config.GetCategoryColor(category);
-        return true;
+            MarkCategory.Wing => WingColor,
+            MarkCategory.Teammate => TeammateColor,
+            MarkCategory.ClaimedTarget => ClaimedTargetColor,
+            _ => throw new ArgumentOutOfRangeException(nameof(category), category, "Invalid category."),
+        };
     }
 }

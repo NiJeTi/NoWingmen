@@ -1,27 +1,45 @@
+using NuclearOption.Networking;
+
 namespace NoWingmen;
 
 internal sealed class Wing
 {
     private readonly HashSet<ulong> _ids = [];
 
-    public bool Check(ulong id)
+    public event Action<bool>? PlayerToggled;
+
+    public IReadOnlyCollection<ulong> Ids => _ids;
+
+    public static bool IsEligible(Player player)
     {
-        return _ids.Contains(id);
+        return !Identity.IsLocalPlayer(player) && Identity.IsSameFaction(player);
     }
 
-    public void Clear()
+    public bool Check(Player player)
     {
-        _ids.Clear();
+        return _ids.Contains(player.SteamID);
     }
 
-    public bool Toggle(ulong steamId)
+    public void Toggle(Player player)
     {
-        if (_ids.Remove(steamId))
+        var id = player.SteamID;
+
+        var state = !_ids.Remove(id);
+        if (state)
         {
-            return false;
+            _ids.Add(id);
         }
 
-        _ids.Add(steamId);
-        return true;
+        PlayerToggled?.Invoke(state);
+    }
+
+    public void Remove(ulong id)
+    {
+        if (!_ids.Remove(id))
+        {
+            return;
+        }
+
+        PlayerToggled?.Invoke(false);
     }
 }
