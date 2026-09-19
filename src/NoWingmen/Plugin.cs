@@ -1,34 +1,24 @@
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using NoWingmen.Marks;
-using NuclearOption.MissionEditorScripts;
 
 namespace NoWingmen;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-[BepInDependency(Controls.InputFrameworkGuid)]
+[BepInDependency(Controls.GuidInputFramework)]
 internal sealed class Plugin : BaseUnityPlugin
 {
-    public new static ManualLogSource Logger { get; private set; }
-    public static StateManager StateManager { get; } = new();
+    public new static ManualLogSource Logger { get; private set; } = null!;
+    public static State? State { get; private set; }
 
-    private Harmony _harmony;
+    private Harmony _harmony = null!;
+
+    private Settings _settings = null!;
+    private Controls _controls = null!;
 
     private void Awake()
     {
         Logger = base.Logger;
-
-        NoWingmen.Config.Bind(
-            Config, () =>
-            {
-                StateManager?.TargetClaimIndex.Clear();
-                StateManager?.LineRenderer.Clear();
-                MarkRenderer.Update();
-            }
-        );
-
-        Controls.Register();
 
         try
         {
@@ -43,103 +33,51 @@ internal sealed class Plugin : BaseUnityPlugin
         }
 
         Logger.LogInfo("Patch successful");
+
+        _settings = Settings.Bind(Config);
+        _controls = Controls.Init();
     }
 
     private void OnDestroy()
     {
+        State?.Dispose();
+        State = null;
+
         _harmony?.UnpatchSelf();
     }
 
     private void Update()
     {
-        if (!StateManager.InGame)
-        {
-            return;
-        }
-
-        if (InputFieldChecker.InsideInputField)
-        {
-            return;
-        }
-
-        if (Controls.Pressed(Controls.ActionToggleWing))
-        {
-            ToggleWing();
-        }
-        else if (Controls.Pressed(Controls.ActionToggleLockPrevention))
-        {
-            ToggleLockPrevention();
-        }
+        State?.Tick();
     }
 
     private void LateUpdate()
     {
-        if (StateManager.MissionTracker.Changed())
-        {
-            Logger.LogDebug("State reset on mission change");
-            StateManager.Reset();
-            MarkRenderer.Update();
-        }
+        UpdateState();
 
-        if (StateManager.TargetClaimIndex.Refresh())
-        {
-            MarkRenderer.Update();
-        }
-
-        StateManager.LineRenderer.Update();
+        State?.LateTick();
     }
 
-    private static void ToggleWing()
+    private void UpdateState()
     {
-        var unit = StateManager.CurrentSelection;
-
-        if (unit == null)
+        if (MissionTracker.HasChanged())
         {
-            Reject("No unit selected");
+            State?.Dispose();
+            State = null;
+        }
+
+        if (State != null)
+        {
             return;
         }
 
-        if (!Identity.IsSameFaction(unit))
+        if (!MissionTracker.InMission)
         {
-            Reject($"<b>{Identity.GetDisplayName(unit)}</b> is in another faction");
             return;
         }
 
-        if (!Identity.TryGetId(unit, out var id))
-        {
-            Reject($"<b>{unit.unitName}</b> is not a player");
-            return;
-        }
+        State = State.Create(_settings, _controls);
 
-        var status = StateManager.Wing.Toggle(id);
-        if (status)
-        {
-            Logger.LogInfo($"'{unit.unitName}' was added to the wing");
-            Feedback.OnWingAdd(unit);
-        }
-        else
-        {
-            Logger.LogInfo($"'{unit.unitName}' was removed from the wing");
-            Feedback.OnWingRemove(unit);
-        }
-
-        StateManager.TargetClaimIndex.Clear();
-        MarkRenderer.Update();
-    }
-
-    private static void Reject(string reason)
-    {
-        Logger.LogDebug(reason);
-        Feedback.OnWingReject(reason);
-    }
-
-    private static void ToggleLockPrevention()
-    {
-        var newState = !StateManager.LockPreventionEnabled;
-        StateManager.LockPreventionEnabled = newState;
-
-        Logger.LogDebug($"Lock prevention {(newState ? "enabled" : "disabled")}");
-
-        Feedback.OnLockPreventionToggle(newState);
+        Logger.LogDebug("Mission state created");
     }
 }

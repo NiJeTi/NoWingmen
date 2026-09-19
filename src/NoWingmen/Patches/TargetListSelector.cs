@@ -10,17 +10,22 @@ internal static class TargetListSelector_CheckExclusions
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(Unit u, ref bool __result)
     {
+        if (Plugin.State == null)
+        {
+            return;
+        }
+        
         if (__result)
         {
             return;
         }
 
-        if (!Plugin.StateManager.LockPreventionEnabled)
+        if (!Plugin.State.LockPreventionEnabled)
         {
             return;
         }
 
-        if (!Plugin.StateManager.TargetClaimIndex.IsClaimed(u))
+        if (!Plugin.State.TargetClaimIndex.IsClaimed(u))
         {
             return;
         }
