@@ -44,7 +44,7 @@ Wing screen, marks and target lines on the map:
 
 ### Nuclear Option Mod Manager
 
-1. Open NOMM.
+1. Open [NOMM](https://github.com/Combat787/NOMM).
 2. Search for `NoWingmen`.
 3. Click toggle to install.
 
