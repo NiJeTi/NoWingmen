@@ -20,7 +20,7 @@ internal static class TargetListSelector_CheckExclusions
             return;
         }
 
-        if (!Plugin.MissionState.LockPreventionEnabled)
+        if (!Plugin.Settings.LockPreventionEnabled.Value)
         {
             return;
         }
