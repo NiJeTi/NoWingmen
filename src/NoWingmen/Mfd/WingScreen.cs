@@ -62,7 +62,7 @@ internal sealed class WingScreen : IDisposable
         _screenIndex = screenIndex;
     }
 
-    public static WingScreen? Create(Settings settings, Wing wing, VirtualMFD mfd)
+    public static WingScreen? Create(Wing wing, VirtualMFD mfd)
     {
         var layout = BuildLayout(mfd);
 
@@ -76,12 +76,12 @@ internal sealed class WingScreen : IDisposable
         var wingScreen = new WingScreen(wing, layout, slotIndex);
 
         var teamOptions = layout.Team.AddRow();
-        wingScreen.AddToggle(teamOptions, MarksLabel, settings.ShowTeammates);
-        wingScreen.AddToggle(teamOptions, TargetsLabel, settings.ShowTeammatesTargetSelection);
+        wingScreen.AddToggle(teamOptions, MarksLabel, Plugin.Settings.ShowTeammates);
+        wingScreen.AddToggle(teamOptions, TargetsLabel, Plugin.Settings.ShowTeammatesTargetSelection);
 
         var wingOptions = layout.Wing.AddRow();
-        wingScreen.AddToggle(wingOptions, MarksLabel, settings.ShowWing);
-        wingScreen.AddToggle(wingOptions, TargetsLabel, settings.ShowWingTargetSelection);
+        wingScreen.AddToggle(wingOptions, MarksLabel, Plugin.Settings.ShowWing);
+        wingScreen.AddToggle(wingOptions, TargetsLabel, Plugin.Settings.ShowWingTargetSelection);
 
         wingScreen._rosterGap = layout.Wing.AddGap();
         wingScreen.RebuildRoster();

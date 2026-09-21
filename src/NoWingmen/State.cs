@@ -10,7 +10,6 @@ internal sealed class State : IDisposable
 {
     private const bool DefaultLockPreventionEnabled = true;
 
-    private readonly Settings _settings;
     private readonly Controls _controls;
     private readonly LineRenderer _lineRenderer;
 
@@ -25,7 +24,6 @@ internal sealed class State : IDisposable
     public bool LockPreventionEnabled { get; private set; } = DefaultLockPreventionEnabled;
 
     private State(
-        Settings settings,
         Controls controls,
         Wing wing,
         TargetClaimIndex targetClaimIndex,
@@ -33,8 +31,8 @@ internal sealed class State : IDisposable
         LineRenderer lineRenderer
     )
     {
-        _settings = settings;
-        _settings.SettingsChanged += OnSettingsChanged;
+        Plugin.Settings.VisualsChanged += OnVisualsChanged;
+        Plugin.Settings.ThemeChanged += OnThemeChanged;
 
         _controls = controls;
 
@@ -57,7 +55,6 @@ internal sealed class State : IDisposable
         var lineRenderer = new LineRenderer(targetClaimIndex);
 
         var state = new State(
-            settings,
             controls,
             wing,
             targetClaimIndex,
@@ -75,7 +72,8 @@ internal sealed class State : IDisposable
 
     public void Dispose()
     {
-        _settings.SettingsChanged -= OnSettingsChanged;
+        Plugin.Settings.VisualsChanged -= OnVisualsChanged;
+        Plugin.Settings.ThemeChanged -= OnThemeChanged;
 
         Wing.PlayerToggled -= OnWingPlayerToggled;
 
@@ -107,7 +105,7 @@ internal sealed class State : IDisposable
     public void AttachWingScreen(VirtualMFD mfd)
     {
         _wingScreen?.Dispose();
-        _wingScreen = WingScreen.Create(_settings, Wing, mfd);
+        _wingScreen = WingScreen.Create(Wing, mfd);
     }
 
     private void ToggleLockPrevention()
@@ -126,11 +124,16 @@ internal sealed class State : IDisposable
         Feedback.OnWingPlayerToggled(state);
     }
 
-    private void OnSettingsChanged(object sender, EventArgs eventArgs)
+    private void OnVisualsChanged(object sender, EventArgs eventArgs)
     {
         TargetClaimIndex.Clear();
         _lineRenderer.Clear();
         MarkRenderer.Update();
         _wingScreen?.OnSettingsChanged();
+    }
+
+    private static void OnThemeChanged()
+    {
+        MarkRenderer.Update();
     }
 }

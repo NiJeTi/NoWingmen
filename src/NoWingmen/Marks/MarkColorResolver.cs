@@ -6,10 +6,6 @@ namespace NoWingmen.Marks;
 
 internal sealed class MarkColorResolver
 {
-    private static readonly Color WingColor = new(1f, 0.75f, 0f);
-    private static readonly Color TeammateColor = new(0.03f, 0.85f, 0.66f);
-    private static readonly Color ClaimedTargetColor = new(0.8f, 0.3f, 1f);
-
     private readonly Settings _settings;
     private readonly Wing _wing;
     private readonly TargetClaimIndex _targetClaimIndex;
@@ -46,7 +42,7 @@ internal sealed class MarkColorResolver
         {
             return false;
         }
-        
+
         if (Identity.IsLocalPlayer(player))
         {
             return false;
@@ -90,12 +86,6 @@ internal sealed class MarkColorResolver
 
     public static Color GetColor(MarkCategory category)
     {
-        return category switch
-        {
-            MarkCategory.Wing => WingColor,
-            MarkCategory.Teammate => TeammateColor,
-            MarkCategory.ClaimedTarget => ClaimedTargetColor,
-            _ => throw new ArgumentOutOfRangeException(nameof(category), category, "Invalid category."),
-        };
+        return Plugin.Settings.Palette.Active.GetColor(category);
     }
 }

@@ -20,7 +20,7 @@ internal static class UnitMapIcon_GetColor
         {
             return;
         }
-        
+
         if (!Plugin.State.MarkColorResolver.TryResolve(__instance.unit, out var color))
         {
             return;

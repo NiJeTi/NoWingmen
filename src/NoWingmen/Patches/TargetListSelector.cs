@@ -14,7 +14,7 @@ internal static class TargetListSelector_CheckExclusions
         {
             return;
         }
-        
+
         if (__result)
         {
             return;

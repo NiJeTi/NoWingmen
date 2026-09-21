@@ -1,4 +1,6 @@
 using BepInEx.Configuration;
+using NoWingmen.Theming;
+using NuclearOption.UIStyleSystem;
 
 namespace NoWingmen;
 
@@ -6,12 +8,14 @@ internal sealed class Settings
 {
     private const string SectionGeneral = "General";
 
-    public ConfigEntry<bool> ShowWing { get; private set; } = null!;
-    public ConfigEntry<bool> ShowWingTargetSelection { get; private set; } = null!;
-    public ConfigEntry<bool> ShowTeammates { get; private set; } = null!;
-    public ConfigEntry<bool> ShowTeammatesTargetSelection { get; private set; } = null!;
+    public ConfigEntry<bool> ShowWing { get; }
+    public ConfigEntry<bool> ShowWingTargetSelection { get; }
+    public ConfigEntry<bool> ShowTeammates { get; }
+    public ConfigEntry<bool> ShowTeammatesTargetSelection { get; }
 
-    public event EventHandler SettingsChanged
+    public PaletteStore Palette { get; }
+
+    public event EventHandler VisualsChanged
     {
         add
         {
@@ -29,30 +33,54 @@ internal sealed class Settings
         }
     }
 
-    private Settings()
+    public event Action ThemeChanged
     {
+        add => ThemeManager.ThemeGroupChanged += value;
+        remove => ThemeManager.ThemeGroupChanged -= value;
     }
 
-    public static Settings Bind(ConfigFile config)
+    private Settings(
+        ConfigEntry<bool> showWing,
+        ConfigEntry<bool> showWingTargetSelection,
+        ConfigEntry<bool> showTeammates,
+        ConfigEntry<bool> showTeammatesTargetSelection,
+        PaletteStore palette
+    )
     {
-        return new Settings
-        {
-            ShowWing = config.Bind(
-                SectionGeneral, "ShowWing", true,
-                "Mark members of your wing."
-            ),
-            ShowWingTargetSelection = config.Bind(
-                SectionGeneral, "ShowWingTargetSelection", true,
-                "Mark every target each wing member have selected."
-            ),
-            ShowTeammates = config.Bind(
-                SectionGeneral, "ShowTeammates", true,
-                "Mark player aircraft in the same faction."
-            ),
-            ShowTeammatesTargetSelection = config.Bind(
-                SectionGeneral, "ShowTeammatesTargetSelection", true,
-                "Mark every target each teammate have selected."
-            )
-        };
+        ShowWing = showWing;
+        ShowWingTargetSelection = showWingTargetSelection;
+        ShowTeammates = showTeammates;
+        ShowTeammatesTargetSelection = showTeammatesTargetSelection;
+        Palette = palette;
+    }
+
+    public static Settings Init(ConfigFile config)
+    {
+        var showWing = config.Bind(
+            SectionGeneral, "ShowWing", true,
+            "Mark members of your wing."
+        );
+        var showWingTargetSelection = config.Bind(
+            SectionGeneral, "ShowWingTargetSelection", true,
+            "Mark every target each wing member have selected."
+        );
+        var showTeammates = config.Bind(
+            SectionGeneral, "ShowTeammates", true,
+            "Mark player aircraft in the same faction."
+        );
+        var showTeammatesTargetSelection = config.Bind(
+            SectionGeneral, "ShowTeammatesTargetSelection", true,
+            "Mark every target each teammate have selected."
+        );
+
+        var paletteStore = new PaletteStore();
+
+        return new Settings(
+            showWing,
+            showWingTargetSelection,
+            showTeammates,
+            showTeammatesTargetSelection,
+            paletteStore
+        );
     }
 }
