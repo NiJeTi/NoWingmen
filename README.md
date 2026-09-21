@@ -14,7 +14,7 @@ for teammates.
 - **Target selection** - mark the enemies your wing and your teammates have already selected, and draw a line on the map
   from each of them to their target.
 - **Wing screen** - a *WNG* page on the map's MFD: mod options and your wing roster.
-- **Lock prevention** - skip enemies already selected by others when cycling targets. Enabled by default, and toggled in
+- **Lock prevention** - skip enemies already selected by others when cycling targets. Toggled in
   flight by a hotkey.
 
 Marks are color-coded and can be customized in game's **Accessibility** settings
