@@ -10,6 +10,6 @@ internal static class VirtualMFD_Start
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(VirtualMFD __instance)
     {
-        State.OnCreateActions.Push(state => state.AttachWingScreen(__instance));
+        MissionState.OnCreateActions.Push(state => state.AttachWingScreen(__instance));
     }
 }

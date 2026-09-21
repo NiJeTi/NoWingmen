@@ -6,7 +6,7 @@ using NuclearOption.MissionEditorScripts;
 
 namespace NoWingmen;
 
-internal sealed class State : IDisposable
+internal sealed class MissionState : IDisposable
 {
     private const bool DefaultLockPreventionEnabled = true;
 
@@ -15,7 +15,7 @@ internal sealed class State : IDisposable
 
     private WingScreen? _wingScreen;
 
-    public static Stack<Action<State>> OnCreateActions { get; } = new();
+    public static Stack<Action<MissionState>> OnCreateActions { get; } = new();
 
     public Wing Wing { get; }
     public TargetClaimIndex TargetClaimIndex { get; }
@@ -23,7 +23,7 @@ internal sealed class State : IDisposable
 
     public bool LockPreventionEnabled { get; private set; } = DefaultLockPreventionEnabled;
 
-    private State(
+    private MissionState(
         Controls controls,
         Wing wing,
         TargetClaimIndex targetClaimIndex,
@@ -45,7 +45,7 @@ internal sealed class State : IDisposable
         _lineRenderer = lineRenderer;
     }
 
-    public static State Create(Settings settings, Controls controls)
+    public static MissionState Create(Settings settings, Controls controls)
     {
         var wing = new Wing();
 
@@ -54,7 +54,7 @@ internal sealed class State : IDisposable
 
         var lineRenderer = new LineRenderer(targetClaimIndex);
 
-        var state = new State(
+        var state = new MissionState(
             controls,
             wing,
             targetClaimIndex,
