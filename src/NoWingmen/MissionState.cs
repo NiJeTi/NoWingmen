@@ -8,8 +8,6 @@ namespace NoWingmen;
 
 internal sealed class MissionState : IDisposable
 {
-    private const bool DefaultLockPreventionEnabled = true;
-
     private readonly Controls _controls;
     private readonly LineRenderer _lineRenderer;
 
@@ -20,8 +18,6 @@ internal sealed class MissionState : IDisposable
     public Wing Wing { get; }
     public TargetClaimIndex TargetClaimIndex { get; }
     public MarkColorResolver MarkColorResolver { get; }
-
-    public bool LockPreventionEnabled { get; private set; } = DefaultLockPreventionEnabled;
 
     private MissionState(
         Controls controls,
@@ -108,12 +104,15 @@ internal sealed class MissionState : IDisposable
         _wingScreen = WingScreen.Create(Wing, mfd);
     }
 
-    private void ToggleLockPrevention()
+    private static void ToggleLockPrevention()
     {
-        LockPreventionEnabled = !LockPreventionEnabled;
-        Feedback.OnLockPreventionToggle(LockPreventionEnabled);
+        var newValue = !Plugin.Settings.LockPreventionEnabled.Value;
 
-        Plugin.Logger.LogDebug($"Lock prevention {(LockPreventionEnabled ? "enabled" : "disabled")}");
+        Plugin.Settings.LockPreventionEnabled.Value = newValue;
+
+        Feedback.OnLockPreventionToggle(newValue);
+
+        Plugin.Logger.LogDebug($"Lock prevention {(newValue ? "enabled" : "disabled")}");
     }
 
     private void OnWingPlayerToggled(bool state)

@@ -13,6 +13,8 @@ internal sealed class Settings
     public ConfigEntry<bool> ShowTeammates { get; }
     public ConfigEntry<bool> ShowTeammatesTargetSelection { get; }
 
+    public ConfigEntry<bool> LockPreventionEnabled { get; }
+
     public PaletteStore Palette { get; }
 
     public event EventHandler VisualsChanged
@@ -44,6 +46,7 @@ internal sealed class Settings
         ConfigEntry<bool> showWingTargetSelection,
         ConfigEntry<bool> showTeammates,
         ConfigEntry<bool> showTeammatesTargetSelection,
+        ConfigEntry<bool> lockPreventionEnabled,
         PaletteStore palette
     )
     {
@@ -51,6 +54,7 @@ internal sealed class Settings
         ShowWingTargetSelection = showWingTargetSelection;
         ShowTeammates = showTeammates;
         ShowTeammatesTargetSelection = showTeammatesTargetSelection;
+        LockPreventionEnabled = lockPreventionEnabled;
         Palette = palette;
     }
 
@@ -72,6 +76,10 @@ internal sealed class Settings
             SectionGeneral, "ShowTeammatesTargetSelection", true,
             "Mark every target each teammate have selected."
         );
+        var lockPreventionEnabled = config.Bind(
+            SectionGeneral, "LockPreventionEnabled", false,
+            "Skip enemies already selected by others when cycling targets."
+        );
 
         var paletteStore = new PaletteStore();
 
@@ -80,6 +88,7 @@ internal sealed class Settings
             showWingTargetSelection,
             showTeammates,
             showTeammatesTargetSelection,
+            lockPreventionEnabled,
             paletteStore
         );
     }
