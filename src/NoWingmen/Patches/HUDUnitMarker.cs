@@ -15,7 +15,7 @@ internal static class HUDUnitMarker_UpdateColor
         {
             return;
         }
-        
+
         if (__instance.selected)
         {
             return;
@@ -45,7 +45,7 @@ internal static class HUDUnitMarker_SetFactionColor
         {
             return;
         }
-        
+
         if (__instance.selected)
         {
             return;

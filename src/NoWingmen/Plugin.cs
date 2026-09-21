@@ -9,11 +9,11 @@ namespace NoWingmen;
 internal sealed class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger { get; private set; } = null!;
+    public static Settings Settings { get; private set; } = null!;
     public static State? State { get; private set; }
 
     private Harmony _harmony = null!;
 
-    private Settings _settings = null!;
     private Controls _controls = null!;
 
     private void Awake()
@@ -32,10 +32,10 @@ internal sealed class Plugin : BaseUnityPlugin
             return;
         }
 
-        Logger.LogInfo("Patch successful");
-
-        _settings = Settings.Bind(Config);
+        Settings = Settings.Init(Config);
         _controls = Controls.Init();
+
+        Logger.LogInfo("Patch successful");
     }
 
     private void OnDestroy()
@@ -43,7 +43,7 @@ internal sealed class Plugin : BaseUnityPlugin
         State?.Dispose();
         State = null;
 
-        _harmony?.UnpatchSelf();
+        _harmony.UnpatchSelf();
     }
 
     private void Update()
@@ -76,7 +76,7 @@ internal sealed class Plugin : BaseUnityPlugin
             return;
         }
 
-        State = State.Create(_settings, _controls);
+        State = State.Create(Settings, _controls);
 
         Logger.LogDebug("Mission state created");
     }

@@ -17,11 +17,9 @@ for teammates.
 - **Lock prevention** - skip enemies already selected by others when cycling targets. Enabled by default, and toggled in
   flight by a hotkey.
 
-Marks are color-coded:
-
-- Wing: ![#FFBF00](https://placehold.co/16x16/FFBF00/FFBF00.png)
-- Teammates: ![#07D8A8](https://placehold.co/16x16/07D8A8/07D8A8.png)
-- Targeted enemies: ![#CC4CFF](https://placehold.co/16x16/CC4CFF/CC4CFF.png)
+Marks are color-coded and can be customized in game's **Accessibility** settings
+in **Advanced** mode under **NoWingmen Marks** section:
+![Color settings](./assets/color_settings.png)
 
 The lock prevention hotkey is bound in the game's own **Controls** menu, under the **Gameplay** section:
 ![Controls](./assets/controls.png)
