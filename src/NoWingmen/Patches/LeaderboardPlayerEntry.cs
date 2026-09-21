@@ -22,7 +22,7 @@ internal static class LeaderboardPlayerEntry_UpdateScore
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(LeaderboardPlayerEntry __instance)
     {
-        if (Plugin.State == null)
+        if (Plugin.MissionState == null)
         {
             return;
         }
@@ -34,7 +34,7 @@ internal static class LeaderboardPlayerEntry_UpdateScore
             return;
         }
 
-        NameTextRef(__instance).color = Plugin.State.Wing.Check(player)
+        NameTextRef(__instance).color = Plugin.MissionState.Wing.Check(player)
             ? MarkColorResolver.GetColor(MarkCategory.Wing)
             : DefaultNameColorRef(__instance);
     }

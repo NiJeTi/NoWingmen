@@ -10,7 +10,7 @@ internal sealed class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger { get; private set; } = null!;
     public static Settings Settings { get; private set; } = null!;
-    public static State? State { get; private set; }
+    public static MissionState? MissionState { get; private set; }
 
     private Harmony _harmony = null!;
 
@@ -40,33 +40,33 @@ internal sealed class Plugin : BaseUnityPlugin
 
     private void OnDestroy()
     {
-        State?.Dispose();
-        State = null;
+        MissionState?.Dispose();
+        MissionState = null;
 
         _harmony.UnpatchSelf();
     }
 
     private void Update()
     {
-        State?.Tick();
+        MissionState?.Tick();
     }
 
     private void LateUpdate()
     {
         UpdateState();
 
-        State?.LateTick();
+        MissionState?.LateTick();
     }
 
     private void UpdateState()
     {
         if (MissionTracker.HasChanged())
         {
-            State?.Dispose();
-            State = null;
+            MissionState?.Dispose();
+            MissionState = null;
         }
 
-        if (State != null)
+        if (MissionState != null)
         {
             return;
         }
@@ -76,7 +76,7 @@ internal sealed class Plugin : BaseUnityPlugin
             return;
         }
 
-        State = State.Create(Settings, _controls);
+        MissionState = MissionState.Create(Settings, _controls);
 
         Logger.LogDebug("Mission state created");
     }

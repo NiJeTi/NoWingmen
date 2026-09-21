@@ -38,7 +38,7 @@ internal static class LeaderBoardRightClickMenu_OnShowPanel
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(LeaderBoardRightClickMenu __instance)
     {
-        if (Plugin.State == null)
+        if (Plugin.MissionState == null)
         {
             return;
         }
@@ -86,7 +86,7 @@ internal static class LeaderBoardRightClickMenu_OnShowPanel
 
     private static void OnClick(LeaderBoardRightClickMenu menu, Player player)
     {
-        Plugin.State?.Wing.Toggle(player);
+        Plugin.MissionState?.Wing.Toggle(player);
         HideMenuAsyncRef(menu);
     }
 }

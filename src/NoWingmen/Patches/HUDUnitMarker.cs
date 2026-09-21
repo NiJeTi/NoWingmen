@@ -11,7 +11,7 @@ internal static class HUDUnitMarker_UpdateColor
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(HUDUnitMarker __instance)
     {
-        if (Plugin.State == null)
+        if (Plugin.MissionState == null)
         {
             return;
         }
@@ -21,7 +21,7 @@ internal static class HUDUnitMarker_UpdateColor
             return;
         }
 
-        if (!Plugin.State.MarkColorResolver.TryResolve(__instance.unit, out var color))
+        if (!Plugin.MissionState.MarkColorResolver.TryResolve(__instance.unit, out var color))
         {
             return;
         }
@@ -41,7 +41,7 @@ internal static class HUDUnitMarker_SetFactionColor
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(HUDUnitMarker __instance)
     {
-        if (Plugin.State == null)
+        if (Plugin.MissionState == null)
         {
             return;
         }
@@ -51,7 +51,7 @@ internal static class HUDUnitMarker_SetFactionColor
             return;
         }
 
-        if (!Plugin.State.MarkColorResolver.TryResolve(__instance.unit, out var color))
+        if (!Plugin.MissionState.MarkColorResolver.TryResolve(__instance.unit, out var color))
         {
             return;
         }

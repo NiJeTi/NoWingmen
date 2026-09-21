@@ -16,12 +16,12 @@ internal static class UnitMapIcon_GetColor
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(UnitMapIcon __instance, ref Color __result)
     {
-        if (Plugin.State == null)
+        if (Plugin.MissionState == null)
         {
             return;
         }
 
-        if (!Plugin.State.MarkColorResolver.TryResolve(__instance.unit, out var color))
+        if (!Plugin.MissionState.MarkColorResolver.TryResolve(__instance.unit, out var color))
         {
             return;
         }
