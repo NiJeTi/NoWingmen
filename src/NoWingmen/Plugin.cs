@@ -12,7 +12,7 @@ internal sealed class Plugin : BaseUnityPlugin
     public static Settings Settings { get; private set; } = null!;
     public static MissionState? MissionState { get; private set; }
 
-    private Harmony _harmony = null!;
+    private Harmony? _harmony;
 
     private Controls _controls = null!;
 
@@ -43,7 +43,7 @@ internal sealed class Plugin : BaseUnityPlugin
         MissionState?.Dispose();
         MissionState = null;
 
-        _harmony.UnpatchSelf();
+        _harmony?.UnpatchSelf();
     }
 
     private void Update()
