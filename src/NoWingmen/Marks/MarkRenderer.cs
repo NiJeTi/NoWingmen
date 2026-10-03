@@ -19,8 +19,11 @@ internal static class MarkRenderer
 
     private static void UpdateMap()
     {
-        var map = SceneSingleton<DynamicMap>.i ??
-            throw new InvalidOperationException($"{nameof(DynamicMap)} is null.");
+        var map = SceneSingleton<DynamicMap>.i;
+        if (map == null)
+        {
+            return;
+        }
 
         var exceptionCount = 0;
         Exception? lastException = null;
@@ -45,8 +48,11 @@ internal static class MarkRenderer
 
     private static void UpdateHud()
     {
-        var hud = SceneSingleton<CombatHUD>.i ??
-            throw new InvalidOperationException($"{nameof(CombatHUD)} is null.");
+        var hud = SceneSingleton<CombatHUD>.i;
+        if (hud == null)
+        {
+            return;
+        }
 
         var exceptionCount = 0;
         Exception? lastException = null;
