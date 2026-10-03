@@ -60,7 +60,14 @@ internal sealed class MissionState : IDisposable
 
         while (OnCreateActions.TryPop(out var action))
         {
-            action(state);
+            try
+            {
+                action(state);
+            }
+            catch (Exception e)
+            {
+                Plugin.Logger.LogError($"Mission state create action failed: {e}");
+            }
         }
 
         return state;
@@ -100,6 +107,11 @@ internal sealed class MissionState : IDisposable
 
     public void AttachWingScreen(VirtualMFD mfd)
     {
+        if (mfd == null)
+        {
+            return;
+        }
+
         _wingScreen?.Dispose();
         _wingScreen = WingScreen.Create(Wing, mfd);
     }
