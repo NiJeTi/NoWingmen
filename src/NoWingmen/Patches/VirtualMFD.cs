@@ -10,6 +10,11 @@ internal static class VirtualMFD_Start
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Postfix(VirtualMFD __instance)
     {
+        if (GameManager.gameState == GameState.SinglePlayer)
+        {
+            return;
+        }
+
         MissionState.OnCreateActions.Push(state => state.AttachWingScreen(__instance));
     }
 }
