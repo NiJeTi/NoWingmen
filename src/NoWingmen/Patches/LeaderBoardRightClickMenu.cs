@@ -23,16 +23,13 @@ internal static class LeaderBoardRightClickMenu_OnShowPanel
     private static readonly AccessTools.FieldRef<LeaderBoardRightClickMenu, Button> BlockButtonRef =
         AccessTools.FieldRefAccess<LeaderBoardRightClickMenu, Button>("blockButton");
 
-    private delegate bool TryGetPlayer(LeaderBoardRightClickMenu menu, out Player player);
-
-    private static readonly TryGetPlayer TryGetPlayerRef = AccessTools.MethodDelegate<TryGetPlayer>(
-        AccessTools.Method(typeof(LeaderBoardRightClickMenu), "TryGetPlayer")
-    );
+    private static readonly AccessTools.FieldRef<LeaderBoardRightClickMenu, Player?> TargetPlayerRef =
+        AccessTools.FieldRefAccess<LeaderBoardRightClickMenu, Player?>("_targetPlayer");
 
     private delegate UniTaskVoid HideMenuAsync(LeaderBoardRightClickMenu menu);
 
     private static readonly HideMenuAsync HideMenuAsyncRef = AccessTools.MethodDelegate<HideMenuAsync>(
-        AccessTools.Method(typeof(LeaderBoardRightClickMenu), "HideMenuAsync")
+        AccessTools.Method(typeof(LeaderBoardRightClickMenu), "HideMenuAsync", Type.EmptyTypes)
     );
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
@@ -69,9 +66,9 @@ internal static class LeaderBoardRightClickMenu_OnShowPanel
 
     private static bool TryGetTarget(LeaderBoardRightClickMenu menu, [NotNullWhen(true)] out Player? player)
     {
-        player = null;
+        player = TargetPlayerRef(menu);
 
-        return TryGetPlayerRef(menu, out player) && Wing.IsEligible(player);
+        return player != null && Wing.IsEligible(player);
     }
 
     private static Button CreateButton(LeaderBoardRightClickMenu menu, Button template)
