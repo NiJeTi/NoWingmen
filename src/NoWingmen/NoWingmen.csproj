@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>15</LangVersion>
         <ImplicitUsings>true</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -20,6 +20,7 @@
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all"/>
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.*" PrivateAssets="all"/>
         <PackageReference Include="BepInEx.Core" Version="5.*"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
         <PackageReference Include="HarmonyX" Version="2.9.0"/>
@@ -33,7 +34,7 @@
         <Reference Include="$(GameRefPath)/Mirage.dll">
             <Private>false</Private>
         </Reference>
-        <Reference Include="$(GameRefPath)/Rewired_Core.dll">
+        <Reference Include="$(GameRefPath)/Rewired_Core.dll" Publicize="true">
             <Private>false</Private>
         </Reference>
         <Reference Include="$(GameRefPath)/UniTask.dll">
@@ -46,9 +47,6 @@
             <Private>false</Private>
         </Reference>
         <Reference Include="$(GameRefPath)/com.rlabrecque.steamworks.net.dll">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="$(GamePluginsPath)/InputFramework/ExtraInput/InputFramework.dll">
             <Private>false</Private>
         </Reference>
     </ItemGroup>

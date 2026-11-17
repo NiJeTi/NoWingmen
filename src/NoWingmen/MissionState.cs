@@ -8,7 +8,6 @@ namespace NoWingmen;
 
 internal sealed class MissionState : IDisposable
 {
-    private readonly Controls _controls;
     private readonly LineRenderer _lineRenderer;
 
     private WingScreen? _wingScreen;
@@ -20,7 +19,6 @@ internal sealed class MissionState : IDisposable
     public MarkColorResolver MarkColorResolver { get; }
 
     private MissionState(
-        Controls controls,
         Wing wing,
         TargetClaimIndex targetClaimIndex,
         MarkColorResolver markColorResolver,
@@ -29,8 +27,6 @@ internal sealed class MissionState : IDisposable
     {
         Plugin.Settings.VisualsChanged += OnVisualsChanged;
         Plugin.Settings.ThemeChanged += OnThemeChanged;
-
-        _controls = controls;
 
         Wing = wing;
         Wing.PlayerToggled += OnWingPlayerToggled;
@@ -41,7 +37,7 @@ internal sealed class MissionState : IDisposable
         _lineRenderer = lineRenderer;
     }
 
-    public static MissionState Create(Settings settings, Controls controls)
+    public static MissionState Create(Settings settings)
     {
         var wing = new Wing();
 
@@ -51,7 +47,6 @@ internal sealed class MissionState : IDisposable
         var lineRenderer = new LineRenderer(targetClaimIndex);
 
         var state = new MissionState(
-            controls,
             wing,
             targetClaimIndex,
             markColorResolver,
@@ -87,7 +82,7 @@ internal sealed class MissionState : IDisposable
 
     public void Tick()
     {
-        if (!InputFieldChecker.InsideInputField && _controls.IsToggleLockPreventionDown())
+        if (!InputFieldChecker.InsideInputField && Controls.IsToggleLockPreventionDown())
         {
             ToggleLockPrevention();
         }

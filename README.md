@@ -49,9 +49,7 @@ Wing screen, marks and target lines on the map:
 ### Manual
 
 1. Install [BepInEx 5](https://github.com/BepInEx/BepInEx) into your Nuclear Option folder.
-2. Install [Extra Input Framework](https://github.com/Assassin1076/NuclearOptionInputFramework/releases) into
-   `BepInEx/plugins`.
-3. Put `NoWingmen.dll` into `BepInEx/plugins`.
+2. Put `NoWingmen.dll` into `BepInEx/plugins`.
 
 ## License
 

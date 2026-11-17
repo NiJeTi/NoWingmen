@@ -5,7 +5,6 @@ using HarmonyLib;
 namespace NoWingmen;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-[BepInDependency(Controls.GuidInputFramework)]
 internal sealed class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger { get; private set; } = null!;
@@ -13,8 +12,6 @@ internal sealed class Plugin : BaseUnityPlugin
     public static MissionState? MissionState { get; private set; }
 
     private Harmony? _harmony;
-
-    private Controls _controls = null!;
 
     private void Awake()
     {
@@ -33,7 +30,6 @@ internal sealed class Plugin : BaseUnityPlugin
         }
 
         Settings = Settings.Init(Config);
-        _controls = Controls.Init();
 
         Logger.LogInfo("Patch successful");
     }
@@ -76,7 +72,7 @@ internal sealed class Plugin : BaseUnityPlugin
             return;
         }
 
-        MissionState = MissionState.Create(Settings, _controls);
+        MissionState = MissionState.Create(Settings);
 
         Logger.LogDebug("Mission state created");
     }
