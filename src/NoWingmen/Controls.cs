@@ -8,7 +8,7 @@ internal static class Controls
     private const string ActionCategory = "Gameplay";
     
     private const string ActionToggleLockPrevention = "NoWingmen: Toggle lock prevention";
-    private const int ActionToggleLockPreventionId = 9121999_01;
+    private const int ActionToggleLockPreventionId = 9_001;
 
     public static void Inject(UserData userData)
     {
